@@ -31,11 +31,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }),
     fileFilter: (req, file, cb) => {
-      // Only allow PDF files
-      if (file.mimetype === 'application/pdf') {
+      // Allow PDF files and common image formats
+      const allowedTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg', 
+        'image/png',
+        'image/webp'
+      ];
+      
+      if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
       } else {
-        cb(new Error('Solo se permiten archivos PDF'));
+        cb(new Error('Solo se permiten archivos PDF, JPG, PNG o WebP'));
       }
     },
     limits: {

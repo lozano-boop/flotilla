@@ -60,11 +60,12 @@ The system manages five main entities:
 
 ### Key Features
 - Real-time dashboard with fleet metrics
-- Vehicle management with status tracking
-- Driver management with license expiry alerts
+- Vehicle management with status tracking and insurance PDF upload
+- Driver management with license expiry alerts and document uploads
+- Document management for drivers (license, address proof, INE) with PDF/image support
 - Maintenance scheduling and history
 - Expense tracking and reporting
-- Document management with expiry notifications
+- File upload system with validation and storage
 
 ## External Dependencies
 

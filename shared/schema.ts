@@ -26,6 +26,9 @@ export const drivers = pgTable("drivers", {
   address: text("address"),
   licenseExpiry: date("license_expiry"),
   status: text("status").notNull().default("active"), // active, inactive
+  licensePdf: text("license_pdf"), // path to license PDF/photo
+  addressProofPdf: text("address_proof_pdf"), // path to address proof PDF/photo
+  inePdf: text("ine_pdf"), // path to INE PDF/photo
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, Edit, Eye, Phone, Mail } from "lucide-react";
+import { Search, Filter, Edit, Eye, Phone, Mail, FileText, AlertTriangle } from "lucide-react";
 import { type Driver } from "@shared/schema";
 
 export default function Drivers() {
@@ -48,6 +48,25 @@ export default function Drivers() {
     const expiry = new Date(expiryDate);
     const today = new Date();
     return expiry < today;
+  };
+
+  const getDocumentStatus = (driver: Driver) => {
+    const documents = [
+      { name: 'Licencia', file: driver.licensePdf },
+      { name: 'Domicilio', file: driver.addressProofPdf },
+      { name: 'INE', file: driver.inePdf }
+    ];
+    
+    const completedDocs = documents.filter(doc => doc.file).length;
+    const totalDocs = documents.length;
+    
+    if (completedDocs === totalDocs) {
+      return { status: 'complete', color: 'bg-green-100 text-green-800', text: 'Completo' };
+    } else if (completedDocs > 0) {
+      return { status: 'partial', color: 'bg-yellow-100 text-yellow-800', text: `${completedDocs}/${totalDocs}` };
+    } else {
+      return { status: 'missing', color: 'bg-red-100 text-red-800', text: 'Pendiente' };
+    }
   };
 
   if (isLoading) {
@@ -124,6 +143,7 @@ export default function Drivers() {
                     <TableHead>Contacto</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead>Vencimiento</TableHead>
+                    <TableHead>Documentos</TableHead>
                     <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -186,6 +206,53 @@ export default function Drivers() {
                         ) : (
                           <span className="text-gray-400">No registrada</span>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Badge className={`${getDocumentStatus(driver).color} px-2 py-1 text-xs font-medium rounded-full`}>
+                            {getDocumentStatus(driver).text}
+                          </Badge>
+                          <div className="flex space-x-1">
+                            {driver.licensePdf && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(driver.licensePdf!, '_blank')}
+                                className="text-blue-600 hover:text-blue-800 p-1"
+                                title="Ver Licencia"
+                              >
+                                <FileText size={12} />
+                              </Button>
+                            )}
+                            {driver.addressProofPdf && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(driver.addressProofPdf!, '_blank')}
+                                className="text-green-600 hover:text-green-800 p-1"
+                                title="Ver Comprobante de Domicilio"
+                              >
+                                <FileText size={12} />
+                              </Button>
+                            )}
+                            {driver.inePdf && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(driver.inePdf!, '_blank')}
+                                className="text-purple-600 hover:text-purple-800 p-1"
+                                title="Ver INE"
+                              >
+                                <FileText size={12} />
+                              </Button>
+                            )}
+                            {getDocumentStatus(driver).status !== 'complete' && (
+                              <span title="Documentos pendientes">
+                                <AlertTriangle size={12} className="text-yellow-600" />
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
