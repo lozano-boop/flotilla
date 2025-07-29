@@ -12,6 +12,8 @@ export const vehicles = pgTable("vehicles", {
   type: text("type").notNull(), // sedan, pickup, van, truck
   status: text("status").notNull().default("active"), // active, maintenance, out_of_service
   driverId: varchar("driver_id"),
+  insurancePdf: text("insurance_pdf"), // path to insurance PDF file
+  insuranceExpiry: date("insurance_expiry"), // insurance expiry date
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 

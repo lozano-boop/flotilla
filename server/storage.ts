@@ -1,4 +1,9 @@
 import { 
+  vehicles,
+  drivers, 
+  maintenanceRecords,
+  expenses,
+  driverDocuments,
   type Vehicle, 
   type InsertVehicle,
   type Driver,
@@ -11,6 +16,13 @@ import {
   type InsertDriverDocument
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { eq } from "drizzle-orm";
+
+// Initialize database connection
+const sql = neon(process.env.DATABASE_URL!);
+const db = drizzle(sql);
 
 export interface IStorage {
   // Vehicles
@@ -52,6 +64,145 @@ export interface IStorage {
   deleteDriverDocument(id: string): Promise<boolean>;
 }
 
+export class PostgresStorage implements IStorage {
+  // Vehicles
+  async getVehicles(): Promise<Vehicle[]> {
+    return await db.select().from(vehicles);
+  }
+
+  async getVehicle(id: string): Promise<Vehicle | undefined> {
+    const result = await db.select().from(vehicles).where(eq(vehicles.id, id));
+    return result[0];
+  }
+
+  async createVehicle(insertVehicle: InsertVehicle): Promise<Vehicle> {
+    const result = await db.insert(vehicles).values(insertVehicle).returning();
+    return result[0];
+  }
+
+  async updateVehicle(id: string, updateData: Partial<InsertVehicle>): Promise<Vehicle | undefined> {
+    const result = await db.update(vehicles).set(updateData).where(eq(vehicles.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteVehicle(id: string): Promise<boolean> {
+    const result = await db.delete(vehicles).where(eq(vehicles.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Drivers
+  async getDrivers(): Promise<Driver[]> {
+    return await db.select().from(drivers);
+  }
+
+  async getDriver(id: string): Promise<Driver | undefined> {
+    const result = await db.select().from(drivers).where(eq(drivers.id, id));
+    return result[0];
+  }
+
+  async createDriver(insertDriver: InsertDriver): Promise<Driver> {
+    const result = await db.insert(drivers).values(insertDriver).returning();
+    return result[0];
+  }
+
+  async updateDriver(id: string, updateData: Partial<InsertDriver>): Promise<Driver | undefined> {
+    const result = await db.update(drivers).set(updateData).where(eq(drivers.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteDriver(id: string): Promise<boolean> {
+    const result = await db.delete(drivers).where(eq(drivers.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Maintenance Records
+  async getMaintenanceRecords(): Promise<MaintenanceRecord[]> {
+    return await db.select().from(maintenanceRecords);
+  }
+
+  async getMaintenanceRecordsByVehicle(vehicleId: string): Promise<MaintenanceRecord[]> {
+    return await db.select().from(maintenanceRecords).where(eq(maintenanceRecords.vehicleId, vehicleId));
+  }
+
+  async getMaintenanceRecord(id: string): Promise<MaintenanceRecord | undefined> {
+    const result = await db.select().from(maintenanceRecords).where(eq(maintenanceRecords.id, id));
+    return result[0];
+  }
+
+  async createMaintenanceRecord(insertRecord: InsertMaintenanceRecord): Promise<MaintenanceRecord> {
+    const result = await db.insert(maintenanceRecords).values(insertRecord).returning();
+    return result[0];
+  }
+
+  async updateMaintenanceRecord(id: string, updateData: Partial<InsertMaintenanceRecord>): Promise<MaintenanceRecord | undefined> {
+    const result = await db.update(maintenanceRecords).set(updateData).where(eq(maintenanceRecords.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteMaintenanceRecord(id: string): Promise<boolean> {
+    const result = await db.delete(maintenanceRecords).where(eq(maintenanceRecords.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Expenses
+  async getExpenses(): Promise<Expense[]> {
+    return await db.select().from(expenses);
+  }
+
+  async getExpensesByVehicle(vehicleId: string): Promise<Expense[]> {
+    return await db.select().from(expenses).where(eq(expenses.vehicleId, vehicleId));
+  }
+
+  async getExpense(id: string): Promise<Expense | undefined> {
+    const result = await db.select().from(expenses).where(eq(expenses.id, id));
+    return result[0];
+  }
+
+  async createExpense(insertExpense: InsertExpense): Promise<Expense> {
+    const result = await db.insert(expenses).values(insertExpense).returning();
+    return result[0];
+  }
+
+  async updateExpense(id: string, updateData: Partial<InsertExpense>): Promise<Expense | undefined> {
+    const result = await db.update(expenses).set(updateData).where(eq(expenses.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteExpense(id: string): Promise<boolean> {
+    const result = await db.delete(expenses).where(eq(expenses.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Driver Documents
+  async getDriverDocuments(): Promise<DriverDocument[]> {
+    return await db.select().from(driverDocuments);
+  }
+
+  async getDriverDocumentsByDriver(driverId: string): Promise<DriverDocument[]> {
+    return await db.select().from(driverDocuments).where(eq(driverDocuments.driverId, driverId));
+  }
+
+  async getDriverDocument(id: string): Promise<DriverDocument | undefined> {
+    const result = await db.select().from(driverDocuments).where(eq(driverDocuments.id, id));
+    return result[0];
+  }
+
+  async createDriverDocument(insertDocument: InsertDriverDocument): Promise<DriverDocument> {
+    const result = await db.insert(driverDocuments).values(insertDocument).returning();
+    return result[0];
+  }
+
+  async updateDriverDocument(id: string, updateData: Partial<InsertDriverDocument>): Promise<DriverDocument | undefined> {
+    const result = await db.update(driverDocuments).set(updateData).where(eq(driverDocuments.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteDriverDocument(id: string): Promise<boolean> {
+    const result = await db.delete(driverDocuments).where(eq(driverDocuments.id, id)).returning();
+    return result.length > 0;
+  }
+}
+
 export class MemStorage implements IStorage {
   private vehicles: Map<string, Vehicle> = new Map();
   private drivers: Map<string, Driver> = new Map();
@@ -77,6 +228,10 @@ export class MemStorage implements IStorage {
     const vehicle: Vehicle = { 
       ...insertVehicle, 
       id, 
+      status: insertVehicle.status || "active",
+      driverId: insertVehicle.driverId || null,
+      insurancePdf: insertVehicle.insurancePdf || null,
+      insuranceExpiry: insertVehicle.insuranceExpiry || null,
       createdAt: new Date() 
     };
     this.vehicles.set(id, vehicle);
@@ -110,6 +265,11 @@ export class MemStorage implements IStorage {
     const driver: Driver = { 
       ...insertDriver, 
       id, 
+      status: insertDriver.status || "active",
+      address: insertDriver.address || null,
+      email: insertDriver.email || null,
+      phone: insertDriver.phone || null,
+      licenseExpiry: insertDriver.licenseExpiry || null,
       createdAt: new Date() 
     };
     this.drivers.set(id, driver);
@@ -148,6 +308,10 @@ export class MemStorage implements IStorage {
     const record: MaintenanceRecord = { 
       ...insertRecord, 
       id, 
+      status: insertRecord.status || "completed",
+      description: insertRecord.description || null,
+      cost: insertRecord.cost || null,
+      nextDue: insertRecord.nextDue || null,
       createdAt: new Date() 
     };
     this.maintenanceRecords.set(id, record);
@@ -186,6 +350,8 @@ export class MemStorage implements IStorage {
     const expense: Expense = { 
       ...insertExpense, 
       id, 
+      vehicleId: insertExpense.vehicleId || null,
+      receipt: insertExpense.receipt || null,
       createdAt: new Date() 
     };
     this.expenses.set(id, expense);
@@ -224,6 +390,11 @@ export class MemStorage implements IStorage {
     const document: DriverDocument = { 
       ...insertDocument, 
       id, 
+      status: insertDocument.status || "valid",
+      documentNumber: insertDocument.documentNumber || null,
+      issueDate: insertDocument.issueDate || null,
+      expiryDate: insertDocument.expiryDate || null,
+      filePath: insertDocument.filePath || null,
       createdAt: new Date() 
     };
     this.driverDocuments.set(id, document);
@@ -244,4 +415,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new PostgresStorage();

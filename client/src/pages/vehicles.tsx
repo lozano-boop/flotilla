@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, Edit, Eye } from "lucide-react";
+import { Search, Filter, Edit, Eye, FileText, Download, AlertTriangle } from "lucide-react";
 import { type Vehicle, type Driver } from "@shared/schema";
 
 export default function Vehicles() {
@@ -57,6 +57,24 @@ export default function Vehicles() {
         return "🛻";
       default:
         return "🚗";
+    }
+  };
+
+  const getInsuranceStatus = (vehicle: Vehicle) => {
+    if (!vehicle.insuranceExpiry) {
+      return { status: 'sin-seguro', color: 'bg-gray-100 text-gray-800', text: 'Sin seguro' };
+    }
+    
+    const expiryDate = new Date(vehicle.insuranceExpiry);
+    const today = new Date();
+    const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilExpiry < 0) {
+      return { status: 'vencido', color: 'bg-red-100 text-red-800', text: 'Vencido' };
+    } else if (daysUntilExpiry <= 30) {
+      return { status: 'por-vencer', color: 'bg-yellow-100 text-yellow-800', text: `${daysUntilExpiry} días` };
+    } else {
+      return { status: 'vigente', color: 'bg-green-100 text-green-800', text: 'Vigente' };
     }
   };
 
@@ -134,6 +152,7 @@ export default function Vehicles() {
                     <TableHead>Estado</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Año</TableHead>
+                    <TableHead>Seguro</TableHead>
                     <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -169,6 +188,30 @@ export default function Vehicles() {
                          vehicle.type}
                       </TableCell>
                       <TableCell>{vehicle.year}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Badge className={`${getInsuranceStatus(vehicle).color} px-2 py-1 text-xs font-medium rounded-full`}>
+                            {getInsuranceStatus(vehicle).text}
+                          </Badge>
+                          {vehicle.insurancePdf && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => window.open(vehicle.insurancePdf!, '_blank')}
+                              className="text-blue-600 hover:text-blue-800 p-1"
+                              title="Ver PDF del seguro"
+                            >
+                              <FileText size={14} />
+                            </Button>
+                          )}
+                          {getInsuranceStatus(vehicle).status === 'por-vencer' && (
+                            <AlertTriangle size={14} className="text-yellow-600" title="Seguro próximo a vencer" />
+                          )}
+                          {getInsuranceStatus(vehicle).status === 'vencido' && (
+                            <AlertTriangle size={14} className="text-red-600" title="Seguro vencido" />
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm" className="text-primary hover:text-blue-600">
