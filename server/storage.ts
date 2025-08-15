@@ -16,13 +16,28 @@ import {
   type InsertDriverDocument
 } from "@shared/schema";
 import { randomUUID } from "crypto";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import { neon } from "@neondatabase/serverless";
 import { eq } from "drizzle-orm";
 
 // Initialize database connection
-const sql = neon(process.env.DATABASE_URL!);
-const db = drizzle(sql);
+const connectionString = process.env.NEON_DATABASE_URL!;
+if (!connectionString) {
+  throw new Error('Debes definir NEON_DATABASE_URL en tu .env');
+}
+
+console.log('📡 Conectando a Neon con:', connectionString);
+
+
+// ② Inicializa el cliente raw de Neon pasándole la string
+const rawClient = neon(connectionString);
+
+// ③ Crea la instancia de Drizzle usando ese cliente
+export const db = drizzle(rawClient, {
+  // Aquí va tu configuración de Drizzle, por ejemplo:
+  // schema: mySchema,
+  // logger: true,
+});
 
 export interface IStorage {
   // Vehicles
