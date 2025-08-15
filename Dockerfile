@@ -20,3 +20,5 @@ COPY --from=builder /app/uploads ./uploads
 EXPOSE 5000
 ENV NODE_ENV=production
 CMD ["node", "dist/index.js"]
+
+const db = drizzle(process.env.NEON_DATABASE_URL!);
