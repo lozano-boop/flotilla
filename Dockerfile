@@ -1,8 +1,10 @@
 # Dockerfile para FlotillaManager
+
 # Etapa 1: Build de dependencias y frontend
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Instala todas las dependencias, incluyendo las de desarrollo para el build
 RUN npm install --production=false
 COPY . .
 RUN npm run build
@@ -11,14 +13,19 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Instala solo las dependencias de producción
 RUN npm install --production
+# Copia los artefactos del build desde la etapa anterior
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.env.production ./.env.production
+# Copia el resto del código de servidor necesario
 COPY --from=builder /app/server ./server
 COPY --from=builder /app/shared ./shared
-COPY --from=builder /app/uploads ./uploads
-EXPOSE 5000
-ENV NODE_ENV=production
-CMD ["node", "dist/index.js"]
 
-const db = drizzle(process.env.NEON_DATABASE_URL!);
+# Expone el puerto en el que corre la aplicación
+EXPOSE 5000
+
+# Establece el entorno a producción
+ENV NODE_ENV=production
+
+# Comando para iniciar el servidor
+CMD ["node", "dist/index.js"]
