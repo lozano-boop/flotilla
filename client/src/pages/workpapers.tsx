@@ -262,12 +262,12 @@ export default function Workpapers() {
   const uploadDeclarationMutation = useMutation({
     mutationFn: async ({ file, formData }: { file: File; formData: any }) => {
       const form = new FormData();
-      form.append('pdf', file);
+      form.append('file', file);
       form.append('tipo', formData.tipo);
       form.append('periodo', `${formData.ano}-${formData.mes.padStart(2, '0')}`);
       form.append('estado', formData.estado);
       
-      const res = await fetch("/api/declarations/upload", {
+      const res = await fetch("/.netlify/functions/declarations-upload", {
         method: "POST",
         body: form,
         credentials: "include",
@@ -284,7 +284,7 @@ export default function Workpapers() {
 
   const loadDeclarations = async () => {
     try {
-      const res = await fetch("/api/declarations", { credentials: "include" });
+      const res = await fetch("/.netlify/functions/declarations-list", { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         setDeclarations(data);
@@ -296,7 +296,7 @@ export default function Workpapers() {
 
   const loadInconsistencies = async () => {
     try {
-      const res = await fetch("/api/declarations/inconsistencies", { credentials: "include" });
+      const res = await fetch("/.netlify/functions/declarations-inconsistencies", { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         setInconsistencies(data);
@@ -314,15 +314,26 @@ export default function Workpapers() {
 
   const handleDeclarationUpload = (e: React.FormEvent) => {
     e.preventDefault();
-    const fileInput = e.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
-    const file = fileInput?.files?.[0];
+    const form = e.currentTarget as HTMLFormElement;
+    const fileInputs = form.querySelectorAll('input[type="file"]') as NodeListOf<HTMLInputElement>;
     
-    if (!file || !declarationForm.tipo || !declarationForm.ano || !declarationForm.mes || !declarationForm.estado) {
-      alert('Por favor completa todos los campos y selecciona un archivo');
+    // Get files from both inputs (individual files and folder)
+    let allFiles: File[] = [];
+    fileInputs.forEach(input => {
+      if (input.files) {
+        allFiles.push(...Array.from(input.files));
+      }
+    });
+    
+    if (allFiles.length === 0 || !declarationForm.tipo || !declarationForm.ano || !declarationForm.mes || !declarationForm.estado) {
+      alert('Por favor completa todos los campos y selecciona al menos un archivo');
       return;
     }
 
-    uploadDeclarationMutation.mutate({ file, formData: declarationForm });
+    // Upload each file
+    allFiles.forEach(file => {
+      uploadDeclarationMutation.mutate({ file, formData: declarationForm });
+    });
   };
 
   return (
@@ -983,12 +994,31 @@ export default function Workpapers() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Archivo PDF</label>
+                  <label className="text-sm font-medium">Archivos PDF</label>
                   <input 
                     type="file" 
                     accept=".pdf"
+                    multiple
+                    webkitdirectory={false}
                     className="w-full px-3 py-2 border border-border rounded bg-transparent file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Puedes seleccionar múltiples archivos PDF manteniendo presionado Ctrl/Cmd
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">O seleccionar carpeta completa</label>
+                  <input 
+                    type="file" 
+                    accept=".pdf"
+                    multiple
+                    webkitdirectory={true}
+                    className="w-full px-3 py-2 border border-border rounded bg-transparent file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-secondary-foreground hover:file:bg-secondary/80"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Selecciona una carpeta completa con todas las declaraciones PDF
+                  </p>
                 </div>
 
                 <form onSubmit={handleDeclarationUpload}>

@@ -21,7 +21,7 @@ export default function LoginPage() {
     setSuccess("");
 
     try {
-      const response = await fetch('https://flotilla-manager-a395al66o-lozanos-projects-1f482492.vercel.app/api/auth/login', {
+      const response = await fetch('/api/auth-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch("https://flotilla-manager-a395al66o-lozanos-projects-1f482492.vercel.app/api/auth/register", {
+      const response = await fetch("/api/auth-register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

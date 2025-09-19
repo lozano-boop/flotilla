@@ -10,7 +10,6 @@ import Vehicles from "@/pages/vehicles";
 import Accounting from "@/pages/accounting";
 import Maintenance from "@/pages/maintenance";
 import Drivers from "@/pages/drivers";
-import Documents from "@/pages/documents";
 import Invoicing from "@/pages/invoicing";
 import TaxReports from "@/pages/tax-reports";
 import Suppliers from "@/pages/suppliers";
@@ -46,7 +45,6 @@ function AuthenticatedApp() {
             <Route path="/suppliers" component={Suppliers} />
             <Route path="/maintenance" component={Maintenance} />
             <Route path="/drivers" component={Drivers} />
-            <Route path="/documents" component={Documents} />
             <Route path="/settings" component={Settings} />
             <Route component={NotFound} />
           </Switch>
