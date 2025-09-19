@@ -1,0 +1,19 @@
+# Sin dominio: Caddy escuchando en puerto 80 de cualquier host/IP
+:80 {
+  encode zstd gzip
+
+  @api path /api* /uploads*
+  handle @api {
+    reverse_proxy app:8080
+  }
+
+  # Todo lo demás (frontend) lo sirve el servidor de Node (ya sirve estático en prod)
+  handle {
+    reverse_proxy app:8080
+  }
+
+  log {
+    output stdout
+    format console
+  }
+}

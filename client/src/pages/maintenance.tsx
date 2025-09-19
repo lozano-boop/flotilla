@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/layout/header";
+import Page from "@/components/layout/page";
 import MaintenanceModal from "@/components/modals/maintenance-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -63,23 +63,18 @@ export default function Maintenance() {
 
   if (isLoading) {
     return (
-      <>
-        <Header title="Mantenimiento" subtitle="Registro y seguimiento de mantenimientos" />
-        <div className="p-6">
-          <div className="text-center">Cargando registros de mantenimiento...</div>
-        </div>
-      </>
+      <Page title="Mantenimiento" subtitle="Registro y seguimiento de mantenimientos">
+        <div className="text-center text-muted-foreground">Cargando registros de mantenimiento...</div>
+      </Page>
     );
   }
 
   return (
-    <>
-      <Header title="Mantenimiento" subtitle="Registro y seguimiento de mantenimientos" />
-      
-      <div className="p-6 overflow-y-auto h-full">
+    <Page title="Mantenimiento" subtitle="Registro y seguimiento de mantenimientos">
+      <div className="overflow-y-auto h-full">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Registros de Mantenimiento</h3>
+            <h3 className="text-lg font-semibold text-foreground">Registros de Mantenimiento</h3>
             <div className="flex items-center space-x-2">
               <div className="relative">
                 <Input
@@ -87,17 +82,17 @@ export default function Maintenance() {
                   placeholder="Buscar mantenimientos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64"
+                  className="pl-10 w-64 bg-muted/50 border-border focus-visible:ring-1 focus-visible:ring-ring"
                 />
-                <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+                <Search className="absolute left-3 top-3 text-muted-foreground" size={16} />
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-border">
                 <Filter className="mr-2" size={16} />
                 Filtrar
               </Button>
               <Button 
                 onClick={() => setMaintenanceModalOpen(true)}
-                className="bg-primary hover:bg-blue-600 text-white"
+                className="bg-primary text-primary-foreground hover:opacity-90"
               >
                 <Plus className="mr-2" size={16} />
                 Nuevo Mantenimiento
@@ -109,10 +104,10 @@ export default function Maintenance() {
             {filteredRecords.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🔧</div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   {maintenanceRecords.length === 0 ? "No hay registros de mantenimiento" : "No se encontraron registros"}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   {maintenanceRecords.length === 0 
                     ? "Comienza registrando el primer mantenimiento de tu flotilla"
                     : "Intenta con otro término de búsqueda"
@@ -121,7 +116,7 @@ export default function Maintenance() {
                 {maintenanceRecords.length === 0 && (
                   <Button 
                     onClick={() => setMaintenanceModalOpen(true)}
-                    className="bg-primary hover:bg-blue-600 text-white"
+                    className="bg-primary text-primary-foreground hover:opacity-90"
                   >
                     <Plus className="mr-2" size={16} />
                     Registrar Primer Mantenimiento
@@ -142,18 +137,18 @@ export default function Maintenance() {
                 </TableHeader>
                 <TableBody>
                   {filteredRecords.map((record) => (
-                    <TableRow key={record.id} className="hover:bg-gray-50">
+                    <TableRow key={record.id} className="hover:bg-muted/50">
                       <TableCell>
                         <div className="flex items-center">
                           <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                             <Wrench className="text-primary" size={16} />
                           </div>
                           <div>
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-foreground">
                               {getVehicleInfo(record.vehicleId)}
                             </div>
                             {record.description && (
-                              <div className="text-sm text-gray-500 truncate max-w-xs">
+                              <div className="text-sm text-muted-foreground truncate max-w-xs">
                                 {record.description}
                               </div>
                             )}
@@ -161,22 +156,22 @@ export default function Maintenance() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-foreground">
                           {getMaintenanceTypeLabel(record.type)}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-foreground">
                           {new Date(record.performedAt).toLocaleDateString()}
                         </div>
                       </TableCell>
                       <TableCell>
                         {record.cost ? (
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-foreground">
                             ${parseFloat(record.cost).toLocaleString()}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No registrado</span>
+                          <span className="text-muted-foreground">No registrado</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -184,11 +179,11 @@ export default function Maintenance() {
                       </TableCell>
                       <TableCell>
                         {record.nextDue ? (
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-foreground">
                             {new Date(record.nextDue).toLocaleDateString()}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No programado</span>
+                          <span className="text-muted-foreground">No programado</span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -199,11 +194,10 @@ export default function Maintenance() {
           </CardContent>
         </Card>
       </div>
-
       <MaintenanceModal 
         open={maintenanceModalOpen} 
         onOpenChange={setMaintenanceModalOpen} 
       />
-    </>
+    </Page>
   );
 }

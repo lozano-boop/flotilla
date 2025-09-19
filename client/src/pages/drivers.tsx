@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/layout/header";
+import Page from "@/components/layout/page";
 import DriverModal from "@/components/modals/driver-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -71,23 +71,18 @@ export default function Drivers() {
 
   if (isLoading) {
     return (
-      <>
-        <Header title="Conductores" subtitle="Gestión de personal de conducción" />
-        <div className="p-6">
-          <div className="text-center">Cargando conductores...</div>
-        </div>
-      </>
+      <Page title="Conductores" subtitle="Gestión de personal de conducción">
+        <div className="text-center text-muted-foreground">Cargando conductores...</div>
+      </Page>
     );
   }
 
   return (
-    <>
-      <Header title="Conductores" subtitle="Gestión de personal de conducción" />
-      
-      <div className="p-6 overflow-y-auto h-full">
+    <Page title="Conductores" subtitle="Gestión de personal de conducción">
+      <div className="overflow-y-auto h-full">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Lista de Conductores</h3>
+            <h3 className="text-lg font-semibold text-foreground">Lista de Conductores</h3>
             <div className="flex items-center space-x-2">
               <div className="relative">
                 <Input
@@ -95,17 +90,17 @@ export default function Drivers() {
                   placeholder="Buscar conductores..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64"
+                  className="pl-10 w-64 bg-muted/50 border-border focus-visible:ring-1 focus-visible:ring-ring"
                 />
-                <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+                <Search className="absolute left-3 top-3 text-muted-foreground" size={16} />
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-border">
                 <Filter className="mr-2" size={16} />
                 Filtrar
               </Button>
               <Button 
                 onClick={() => setDriverModalOpen(true)}
-                className="bg-primary hover:bg-blue-600 text-white"
+                className="bg-primary text-primary-foreground hover:opacity-90"
               >
                 + Nuevo Conductor
               </Button>
@@ -116,10 +111,10 @@ export default function Drivers() {
             {filteredDrivers.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">👨‍💼</div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   {drivers.length === 0 ? "No hay conductores registrados" : "No se encontraron conductores"}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   {drivers.length === 0 
                     ? "Comienza agregando tu primer conductor"
                     : "Intenta con otro término de búsqueda"
@@ -128,7 +123,7 @@ export default function Drivers() {
                 {drivers.length === 0 && (
                   <Button 
                     onClick={() => setDriverModalOpen(true)}
-                    className="bg-primary hover:bg-blue-600 text-white"
+                    className="bg-primary text-primary-foreground hover:opacity-90"
                   >
                     + Agregar Primer Conductor
                   </Button>
@@ -149,7 +144,7 @@ export default function Drivers() {
                 </TableHeader>
                 <TableBody>
                   {filteredDrivers.map((driver) => (
-                    <TableRow key={driver.id} className="hover:bg-gray-50">
+                    <TableRow key={driver.id} className="hover:bg-muted/50">
                       <TableCell>
                         <div className="flex items-center">
                           <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mr-3">
@@ -158,9 +153,9 @@ export default function Drivers() {
                             </span>
                           </div>
                           <div>
-                            <div className="font-medium text-gray-900">{driver.name}</div>
+                            <div className="font-medium text-foreground">{driver.name}</div>
                             {driver.email && (
-                              <div className="flex items-center text-sm text-gray-500">
+                              <div className="flex items-center text-sm text-muted-foreground">
                                 <Mail size={12} className="mr-1" />
                                 {driver.email}
                               </div>
@@ -169,11 +164,11 @@ export default function Drivers() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium text-gray-900">{driver.licenseNumber}</div>
+                        <div className="font-medium text-foreground">{driver.licenseNumber}</div>
                       </TableCell>
                       <TableCell>
                         {driver.phone && (
-                          <div className="flex items-center text-sm text-gray-600">
+                          <div className="flex items-center text-sm text-muted-foreground">
                             <Phone size={12} className="mr-1" />
                             {driver.phone}
                           </div>
@@ -188,7 +183,7 @@ export default function Drivers() {
                             <div className={`text-sm ${
                               isLicenseExpired(driver.licenseExpiry) ? 'text-error font-semibold' :
                               isLicenseExpiringSoon(driver.licenseExpiry) ? 'text-warning font-semibold' :
-                              'text-gray-600'
+                              'text-muted-foreground'
                             }`}>
                               {new Date(driver.licenseExpiry).toLocaleDateString()}
                             </div>
@@ -204,7 +199,7 @@ export default function Drivers() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No registrada</span>
+                          <span className="text-muted-foreground">No registrada</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -218,7 +213,7 @@ export default function Drivers() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => window.open(driver.licensePdf!, '_blank')}
-                                className="text-blue-600 hover:text-blue-800 p-1"
+                                className="text-primary hover:opacity-90 p-1"
                                 title="Ver Licencia"
                               >
                                 <FileText size={12} />
@@ -229,7 +224,7 @@ export default function Drivers() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => window.open(driver.addressProofPdf!, '_blank')}
-                                className="text-green-600 hover:text-green-800 p-1"
+                                className="text-success hover:opacity-90 p-1"
                                 title="Ver Comprobante de Domicilio"
                               >
                                 <FileText size={12} />
@@ -240,7 +235,7 @@ export default function Drivers() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => window.open(driver.inePdf!, '_blank')}
-                                className="text-purple-600 hover:text-purple-800 p-1"
+                                className="p-1"
                                 title="Ver INE"
                               >
                                 <FileText size={12} />
@@ -248,7 +243,7 @@ export default function Drivers() {
                             )}
                             {getDocumentStatus(driver).status !== 'complete' && (
                               <span title="Documentos pendientes">
-                                <AlertTriangle size={12} className="text-yellow-600" />
+                                <AlertTriangle size={12} className="text-warning" />
                               </span>
                             )}
                           </div>
@@ -256,10 +251,10 @@ export default function Drivers() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm" className="text-primary hover:text-blue-600">
+                          <Button variant="ghost" size="sm" className="text-primary hover:opacity-90">
                             <Edit size={16} />
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-800">
+                          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                             <Eye size={16} />
                           </Button>
                         </div>
@@ -277,6 +272,6 @@ export default function Drivers() {
         open={driverModalOpen} 
         onOpenChange={setDriverModalOpen} 
       />
-    </>
+    </Page>
   );
 }

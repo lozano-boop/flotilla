@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/layout/header";
+import Page from "@/components/layout/page";
 import DocumentModal from "@/components/modals/document-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -107,28 +107,23 @@ export default function Documents() {
 
   if (isLoading) {
     return (
-      <>
-        <Header title="Documentación" subtitle="Control de papelería y documentos" />
-        <div className="p-6">
-          <div className="text-center">Cargando documentos...</div>
-        </div>
-      </>
+      <Page title="Documentación" subtitle="Control de papelería y documentos">
+        <div className="text-center text-muted-foreground">Cargando documentos...</div>
+      </Page>
     );
   }
 
   return (
-    <>
-      <Header title="Documentación" subtitle="Control de papelería y documentos" />
-      
-      <div className="p-6 overflow-y-auto h-full">
+    <Page title="Documentación" subtitle="Control de papelería y documentos">
+      <div className="overflow-y-auto h-full">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">Total Documentos</p>
-                  <p className="text-3xl font-bold text-gray-800">{totalDocuments}</p>
+                  <p className="text-muted-foreground text-sm font-medium">Total Documentos</p>
+                  <p className="text-3xl font-bold text-foreground">{totalDocuments}</p>
                 </div>
                 <div className="w-12 h-12 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center">
                   <FileText className="text-primary" size={24} />
@@ -141,8 +136,8 @@ export default function Documents() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">Por Vencer</p>
-                  <p className="text-3xl font-bold text-gray-800">{expiringSoonDocuments}</p>
+                  <p className="text-muted-foreground text-sm font-medium">Por Vencer</p>
+                  <p className="text-3xl font-bold text-foreground">{expiringSoonDocuments}</p>
                 </div>
                 <div className="w-12 h-12 bg-warning bg-opacity-10 rounded-lg flex items-center justify-center">
                   <AlertTriangle className="text-warning" size={24} />
@@ -155,8 +150,8 @@ export default function Documents() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">Vencidos</p>
-                  <p className="text-3xl font-bold text-gray-800">{expiredDocuments}</p>
+                  <p className="text-muted-foreground text-sm font-medium">Vencidos</p>
+                  <p className="text-3xl font-bold text-foreground">{expiredDocuments}</p>
                 </div>
                 <div className="w-12 h-12 bg-error bg-opacity-10 rounded-lg flex items-center justify-center">
                   <AlertTriangle className="text-error" size={24} />
@@ -169,7 +164,7 @@ export default function Documents() {
         {/* Documents Table */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Documentos de Conductores</h3>
+            <h3 className="text-lg font-semibold text-foreground">Documentos de Conductores</h3>
             <div className="flex items-center space-x-2">
               <div className="relative">
                 <Input
@@ -177,17 +172,17 @@ export default function Documents() {
                   placeholder="Buscar documentos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64"
+                  className="pl-10 w-64 bg-muted/50 border-border focus-visible:ring-1 focus-visible:ring-ring"
                 />
-                <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+                <Search className="absolute left-3 top-3 text-muted-foreground" size={16} />
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-border">
                 <Filter className="mr-2" size={16} />
                 Filtrar
               </Button>
               <Button 
                 onClick={() => setDocumentModalOpen(true)}
-                className="bg-primary hover:bg-blue-600 text-white"
+                className="bg-primary text-primary-foreground hover:opacity-90"
               >
                 <Plus className="mr-2" size={16} />
                 Nuevo Documento
@@ -199,10 +194,10 @@ export default function Documents() {
             {filteredDocuments.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📋</div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   {documents.length === 0 ? "No hay documentos registrados" : "No se encontraron documentos"}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   {documents.length === 0 
                     ? "Comienza registrando los documentos de tus conductores"
                     : "Intenta con otro término de búsqueda"
@@ -211,7 +206,7 @@ export default function Documents() {
                 {documents.length === 0 && (
                   <Button 
                     onClick={() => setDocumentModalOpen(true)}
-                    className="bg-primary hover:bg-blue-600 text-white"
+                    className="bg-primary text-primary-foreground hover:opacity-90"
                   >
                     <Plus className="mr-2" size={16} />
                     Registrar Primer Documento
@@ -232,7 +227,7 @@ export default function Documents() {
                 </TableHeader>
                 <TableBody>
                   {filteredDocuments.map((document) => (
-                    <TableRow key={document.id} className="hover:bg-gray-50">
+                    <TableRow key={document.id} className="hover:bg-muted/50">
                       <TableCell>
                         <div className="flex items-center">
                           <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mr-3">
@@ -241,7 +236,7 @@ export default function Documents() {
                             </span>
                           </div>
                           <div>
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-foreground">
                               {getDriverInfo(document.driverId)}
                             </div>
                           </div>
@@ -252,27 +247,27 @@ export default function Documents() {
                           <span className="text-2xl mr-2">
                             {getDocumentIcon(document.type)}
                           </span>
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-foreground">
                             {getDocumentTypeLabel(document.type)}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         {document.documentNumber ? (
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-foreground">
                             {document.documentNumber}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No registrado</span>
+                          <span className="text-muted-foreground">No registrado</span>
                         )}
                       </TableCell>
                       <TableCell>
                         {document.issueDate ? (
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-foreground">
                             {new Date(document.issueDate).toLocaleDateString()}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No registrada</span>
+                          <span className="text-muted-foreground">No registrada</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -281,7 +276,7 @@ export default function Documents() {
                             <div className={`text-sm ${
                               isExpired(document.expiryDate) ? 'text-error font-semibold' :
                               isExpiringSoon(document.expiryDate) ? 'text-warning font-semibold' :
-                              'text-gray-900'
+                              'text-foreground'
                             }`}>
                               {new Date(document.expiryDate).toLocaleDateString()}
                             </div>
@@ -299,7 +294,7 @@ export default function Documents() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No registrado</span>
+                          <span className="text-muted-foreground">No registrado</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -313,11 +308,10 @@ export default function Documents() {
           </CardContent>
         </Card>
       </div>
-
       <DocumentModal 
         open={documentModalOpen} 
         onOpenChange={setDocumentModalOpen} 
       />
-    </>
+    </Page>
   );
 }

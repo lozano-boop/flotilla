@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/layout/header";
 import MetricsCard from "@/components/dashboard/metrics-card";
 import ActivityFeed from "@/components/dashboard/activity-feed";
 import QuickActions from "@/components/dashboard/quick-actions";
@@ -16,6 +15,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { type Vehicle, type Driver } from "@shared/schema";
+import Page from "@/components/layout/page";
 
 interface DashboardStats {
   totalVehicles: number;
@@ -72,12 +72,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Header 
-        title="Dashboard" 
-        subtitle="Resumen general de tu flotilla" 
-      />
-      
-      <div className="p-6 overflow-y-auto h-full">
+      <Page title="Dashboard" subtitle="Resumen general de tu flota y actividad reciente">
         {/* Alert System */}
         {!alertDismissed && stats && stats.overdueMaintenance > 0 && (
           <div className="mb-6">
@@ -86,7 +81,7 @@ export default function Dashboard() {
               <AlertDescription className="flex items-center justify-between">
                 <div>
                   <h4 className="font-semibold text-warning">Mantenimientos Pendientes</h4>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-foreground">
                     Tienes {stats.overdueMaintenance} vehículos con mantenimiento vencido
                   </p>
                 </div>
@@ -94,7 +89,7 @@ export default function Dashboard() {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setAlertDismissed(true)}
-                  className="text-warning hover:text-orange-600"
+                  className="text-warning hover:text-warning"
                 >
                   ×
                 </Button>
@@ -154,7 +149,32 @@ export default function Dashboard() {
           />
         </div>
 
+        {/* Fleet Map + Panels */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Map Placeholder */}
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-foreground">Mapa de Vehículos</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="w-full h-64 md:h-[340px] rounded-lg bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-family=\'Arial\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\' dy=\'.3em\'%3EMapa (placeholder) Estilo Uber\3C/text%3E%3C/svg%3E')] bg-center bg-cover border border-border flex items-center justify-center" />
+              <div className="flex items-center gap-3 mt-4 text-sm text-muted-foreground">
+                <span className="inline-flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-success"></span>
+                  Activos
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-warning"></span>
+                  Mantenimiento
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-error"></span>
+                  Fuera de servicio
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Recent Activities */}
           <div className="lg:col-span-2">
             <ActivityFeed />
@@ -168,7 +188,6 @@ export default function Dashboard() {
               onNewExpense={() => setExpenseModalOpen(true)}
               onNewDriver={() => setDriverModalOpen(true)}
             />
-            
             {stats && (
               <FleetStatus
                 activeVehicles={stats.activeVehicles}
@@ -184,10 +203,10 @@ export default function Dashboard() {
         <div className="mt-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-800">Vehículos Recientes</h3>
+              <h3 className="text-lg font-semibold text-foreground">Vehículos Recientes</h3>
               <Button 
                 onClick={() => setVehicleModalOpen(true)}
-                className="bg-primary hover:bg-blue-600 text-white"
+                className="bg-primary text-primary-foreground hover:opacity-90"
               >
                 + Nuevo Vehículo
               </Button>
@@ -195,7 +214,7 @@ export default function Dashboard() {
             
             <CardContent>
               {recentVehicles.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   No hay vehículos registrados. ¡Comienza agregando tu primer vehículo!
                 </div>
               ) : (
@@ -213,14 +232,14 @@ export default function Dashboard() {
                       <TableRow key={vehicle.id}>
                         <TableCell>
                           <div>
-                            <div className="font-medium text-gray-900">{vehicle.plate}</div>
-                            <div className="text-sm text-gray-500">
+                            <div className="font-medium text-foreground">{vehicle.plate}</div>
+                            <div className="text-sm text-muted-foreground">
                               {vehicle.brand} {vehicle.model} {vehicle.year}
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {getVehicleDriver(vehicle.driverId)}
                           </div>
                         </TableCell>
@@ -238,7 +257,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </Page>
 
       {/* Modals */}
       <VehicleModal 

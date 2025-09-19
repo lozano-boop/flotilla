@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "npm run build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "dev",
+      "type": "shell",
+      "command": "npm run dev",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "docker-build",
+      "type": "shell",
+      "command": "docker build -t flotilla-manager:latest .",
+      "group": "build"
+    },
+    {
+      "label": "docker-run",
+      "type": "shell",
+      "command": "docker run -d --name flotilla-manager -p 5000:5000 --env-file .env.production flotilla-manager:latest",
+      "group": "none"
+    }
+  ]
+}

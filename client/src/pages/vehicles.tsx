@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/layout/header";
 import VehicleModal from "@/components/modals/vehicle-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, Edit, Eye, FileText, Download, AlertTriangle } from "lucide-react";
 import { type Vehicle, type Driver } from "@shared/schema";
+import Page from "@/components/layout/page";
 
 export default function Vehicles() {
   const [vehicleModalOpen, setVehicleModalOpen] = useState(false);
@@ -80,161 +80,153 @@ export default function Vehicles() {
 
   if (isLoading) {
     return (
-      <>
-        <Header title="Vehículos" subtitle="Gestión de la flotilla vehicular" />
-        <div className="p-6">
-          <div className="text-center">Cargando vehículos...</div>
-        </div>
-      </>
+      <Page title="Vehículos" subtitle="Gestión de la flotilla vehicular">
+        <div className="text-center text-muted-foreground">Cargando vehículos...</div>
+      </Page>
     );
   }
 
   return (
-    <>
-      <Header title="Vehículos" subtitle="Gestión de la flotilla vehicular" />
-      
-      <div className="p-6 overflow-y-auto h-full">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Lista de Vehículos</h3>
-            <div className="flex items-center space-x-2">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Buscar vehículos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64"
-                />
-                <Search className="absolute left-3 top-3 text-gray-400" size={16} />
-              </div>
-              <Button variant="outline" size="sm">
-                <Filter className="mr-2" size={16} />
-                Filtrar
-              </Button>
-              <Button 
-                onClick={() => setVehicleModalOpen(true)}
-                className="bg-primary hover:bg-blue-600 text-white"
-              >
-                + Nuevo Vehículo
-              </Button>
+    <Page title="Vehículos" subtitle="Gestión de la flotilla vehicular">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <h3 className="text-lg font-semibold text-foreground">Lista de Vehículos</h3>
+          <div className="flex items-center space-x-2">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Buscar vehículos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-64 bg-muted/50 border-border focus-visible:ring-1 focus-visible:ring-ring"
+              />
+              <Search className="absolute left-3 top-3 text-muted-foreground" size={16} />
             </div>
-          </CardHeader>
-          
-          <CardContent>
-            {filteredVehicles.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🚗</div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  {vehicles.length === 0 ? "No hay vehículos registrados" : "No se encontraron vehículos"}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  {vehicles.length === 0 
-                    ? "Comienza agregando tu primer vehículo a la flotilla"
-                    : "Intenta con otro término de búsqueda"
-                  }
-                </p>
-                {vehicles.length === 0 && (
-                  <Button 
-                    onClick={() => setVehicleModalOpen(true)}
-                    className="bg-primary hover:bg-blue-600 text-white"
-                  >
-                    + Agregar Primer Vehículo
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Vehículo</TableHead>
-                    <TableHead>Conductor</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Año</TableHead>
-                    <TableHead>Seguro</TableHead>
-                    <TableHead>Acciones</TableHead>
+            <Button variant="outline" size="sm" className="border-border">
+              <Filter className="mr-2" size={16} />
+              Filtrar
+            </Button>
+            <Button 
+              onClick={() => setVehicleModalOpen(true)}
+              className="bg-primary text-primary-foreground hover:opacity-90"
+            >
+              + Nuevo Vehículo
+            </Button>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          {filteredVehicles.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🚗</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {vehicles.length === 0 ? "No hay vehículos registrados" : "No se encontraron vehículos"}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {vehicles.length === 0 
+                  ? "Comienza agregando tu primer vehículo a la flotilla"
+                  : "Intenta con otro término de búsqueda"
+                }
+              </p>
+              {vehicles.length === 0 && (
+                <Button 
+                  onClick={() => setVehicleModalOpen(true)}
+                  className="bg-primary text-primary-foreground hover:opacity-90"
+                >
+                  + Agregar Primer Vehículo
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Vehículo</TableHead>
+                  <TableHead>Conductor</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Año</TableHead>
+                  <TableHead>Seguro</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredVehicles.map((vehicle) => (
+                  <TableRow key={vehicle.id} className="hover:bg-muted/50">
+                    <TableCell>
+                      <div className="flex items-center">
+                        <div className="text-2xl mr-3">
+                          {getVehicleIcon(vehicle.type)}
+                        </div>
+                        <div>
+                          <div className="font-medium text-foreground">{vehicle.plate}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {vehicle.brand} {vehicle.model}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm font-medium text-foreground">
+                        {getVehicleDriver(vehicle.driverId)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(vehicle.status)}
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {vehicle.type === "sedan" ? "Sedán" :
+                       vehicle.type === "pickup" ? "Pickup" :
+                       vehicle.type === "van" ? "Van" :
+                       vehicle.type === "truck" ? "Camión" :
+                       vehicle.type}
+                    </TableCell>
+                    <TableCell>{vehicle.year}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Badge className={`${getInsuranceStatus(vehicle).color} px-2 py-1 text-xs font-medium rounded-full`}>
+                          {getInsuranceStatus(vehicle).text}
+                        </Badge>
+                        {vehicle.insurancePdf && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(vehicle.insurancePdf!, '_blank')}
+                            className="text-primary hover:opacity-90 p-1"
+                            title="Ver PDF del seguro"
+                          >
+                            <FileText size={14} />
+                          </Button>
+                        )}
+                        {getInsuranceStatus(vehicle).status === 'por-vencer' && (
+                          <AlertTriangle size={14} className="text-warning" />
+                        )}
+                        {getInsuranceStatus(vehicle).status === 'vencido' && (
+                          <AlertTriangle size={14} className="text-error" />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="sm" className="text-primary hover:opacity-90">
+                          <Edit size={16} />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                          <Eye size={16} />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredVehicles.map((vehicle) => (
-                    <TableRow key={vehicle.id} className="hover:bg-gray-50">
-                      <TableCell>
-                        <div className="flex items-center">
-                          <div className="text-2xl mr-3">
-                            {getVehicleIcon(vehicle.type)}
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900">{vehicle.plate}</div>
-                            <div className="text-sm text-gray-500">
-                              {vehicle.brand} {vehicle.model}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm font-medium text-gray-900">
-                          {getVehicleDriver(vehicle.driverId)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(vehicle.status)}
-                      </TableCell>
-                      <TableCell className="capitalize">
-                        {vehicle.type === "sedan" ? "Sedán" :
-                         vehicle.type === "pickup" ? "Pickup" :
-                         vehicle.type === "van" ? "Van" :
-                         vehicle.type === "truck" ? "Camión" :
-                         vehicle.type}
-                      </TableCell>
-                      <TableCell>{vehicle.year}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Badge className={`${getInsuranceStatus(vehicle).color} px-2 py-1 text-xs font-medium rounded-full`}>
-                            {getInsuranceStatus(vehicle).text}
-                          </Badge>
-                          {vehicle.insurancePdf && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => window.open(vehicle.insurancePdf!, '_blank')}
-                              className="text-blue-600 hover:text-blue-800 p-1"
-                              title="Ver PDF del seguro"
-                            >
-                              <FileText size={14} />
-                            </Button>
-                          )}
-                          {getInsuranceStatus(vehicle).status === 'por-vencer' && (
-                            <AlertTriangle size={14} className="text-yellow-600" title="Seguro próximo a vencer" />
-                          )}
-                          {getInsuranceStatus(vehicle).status === 'vencido' && (
-                            <AlertTriangle size={14} className="text-red-600" title="Seguro vencido" />
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm" className="text-primary hover:text-blue-600">
-                            <Edit size={16} />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-800">
-                            <Eye size={16} />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
       <VehicleModal 
         open={vehicleModalOpen} 
         onOpenChange={setVehicleModalOpen} 
       />
-    </>
+    </Page>
   );
 }

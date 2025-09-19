@@ -1,0 +1,3 @@
+NODE_ENV=production
+DATABASE_URL=tu_url_de_neon_db
+PORT=5000

@@ -31,7 +31,7 @@ export default function VehicleModal({ open, onOpenChange }: VehicleModalProps) 
       brand: "",
       model: "",
       year: new Date().getFullYear(),
-      type: "",
+      type: "sedan",
       status: "active",
       driverId: null,
       insurancePdf: null,

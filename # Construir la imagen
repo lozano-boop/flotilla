@@ -1,0 +1,9 @@
+# Construir la imagen
+docker build -t flotilla-manager:latest .
+
+# Ejecutar el contenedor
+docker run -d \
+  --name flotilla-manager \
+  -p 5000:5000 \
+  --env-file .env.production \
+  flotilla-manager:latest

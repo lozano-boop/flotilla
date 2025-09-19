@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  app:
+    environment:
+      # Forzar la app a usar NEON en lugar del servicio 'db'
+      NEON_DATABASE_URL: "${NEON_DATABASE_URL}"
